@@ -470,7 +470,6 @@ headers = {
  }
 
 for stock in stocks:
-    print(stock)
     # Define a URL do site a ser visitado
     url = 'https://statusinvest.com.br/acoes/' + stock
 
@@ -488,11 +487,8 @@ for stock in stocks:
         # Encontra o elemento strong dentro da div
         strong_lucratividade = div_lucratividade.find('strong')
         
-        # Extrai o valor do elemento strong
+        # Extrai o valor do elemento strong para o LPA
         valor_lucratividade = strong_lucratividade.text
-
-
-
 
         # Encontra a primeira div cujo atributo "title" é igual a "Valor atual do ativo"
         div_valor_ativo = soup.find('div', {'title': 'Valor atual do ativo'})
@@ -500,28 +496,32 @@ for stock in stocks:
          # Encontra o elemento strong dentro da div
         strong_valor_ativo = div_valor_ativo.find('strong')
         
-        # Extrai o valor do elemento strong
+        # Extrai o valor do elemento strong para o valor da ação
         valor_ativo = strong_valor_ativo.text
 
-        #Calcula Earning Yield
+        # Calcula Earning Yield
         ey = (float(valor_lucratividade.replace(',','.')) / float(valor_ativo.replace(',','.'))) * 100
 
-        #Arredonda o resultado do earning yield
+        # Arredonda o resultado do earning yield
         round_ey = round(ey,2)
         
-        # Exibe o resultado
+        # Exibe os resultados
         print('Valor atual do ativo:', valor_ativo)
         print('Valor da lucratividade:', valor_lucratividade)
-        print('EY:',round(ey,2))
+        print('EY:', round_ey)
 
+        # Cria uma tupla com o nome da ação e o seu earning yield
         tupla = (stock, round_ey)
+
+        # Salva o resultado em nosso array declarado lá acima
         earnigs_yield.append(tupla)
 
     else:
         print('Erro ao acessar o site:', response.status_code)
 
-print('Stocks order by earning yield')
+print('Ranking ordenado pelo earning yield')
 
+# Exibindo o resultados ordenado de forma decrescente pelo ey
 earnigs_yield.sort(key=lambda a: a[1], reverse=True)
 for stock in earnigs_yield:
     print(stock[0] + ": " + str(stock[1]))
